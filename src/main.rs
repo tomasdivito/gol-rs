@@ -1,5 +1,9 @@
+extern crate gtk;
+use gtk::prelude::*;
+use gtk::{Window, Button, Grid, WindowType};
 use std::io::stdin;
 use std::cmp::Ordering;
+
 
 #[derive(Debug)]
 struct Point {
@@ -186,6 +190,40 @@ impl GameBoard {
 }
 
 fn main () {
+    // GTK initialization.
+    gtk::init().unwrap();
+
+    // Create the main window.
+    let WIDTH = 640;
+    let HEIGHT = 480;
+    let window = Window::new(WindowType::Toplevel);
+    window.set_title("Game Of Life - Tomas Di Vito");
+    window.resize(WIDTH, HEIGHT);
+
+    // UI initialization should be here
+    let grid = Grid::new();
+     for i in 0..50 {
+        for j in 0..50 {
+            let button = Button::new();
+            grid.attach(&button, i, j, 1, 1);
+        }
+    }
+
+    // End of UI.
+    window.add(&grid);
+    window.show_all();
+
+    // Handle closing of the window.
+    window.connect_delete_event(|_, _| {
+        // Stop the main loop.
+        gtk::main_quit();
+        // Let the default handler destroy the window.
+        Inhibit(false)
+    });
+
+    // Run the main loop.
+    gtk::main();
+
     let mut board = GameBoard::new(50, 50);
 
     for i in 18..30 {
